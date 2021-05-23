@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface UserService {
 
-    public User createUser(User user) ;
-    public  User updateUser(User user,long userID);
-    public List<User> retrieveAllUser();
+    public UserDTO createUser(UserDTO userDTO) ;
+    public  UserDTO updateUser(UserDTO userDTO,long userID);
+    public List<UserDTO> retrieveAllUser();
     public void deleteUser(long userID);
-    public  User retrieveUserById(long userID);
-    public User retrieveUserByFirstName(String fname);
-    public List<User> retrieveByFirstNameContaining(String sequence);
-    public List<User> retrieveByFirstNameStartsWith(String sequence);
-    public List<User> retrieveByFirstNameEndsWith(String sequence);
+    public  UserDTO retrieveUserById(long userID);
+    public UserDTO retrieveUserByFirstName(String fname);
+    public List<UserDTO> retrieveByFirstNameContaining(String sequence);
+    public List<UserDTO> retrieveByFirstNameStartsWith(String sequence);
+    public List<UserDTO> retrieveByFirstNameEndsWith(String sequence);
 
 
 

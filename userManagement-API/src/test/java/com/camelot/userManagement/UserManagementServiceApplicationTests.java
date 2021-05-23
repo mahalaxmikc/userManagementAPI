@@ -51,10 +51,7 @@ class UserManagementServiceApplicationTests {
 		UserDTO userDTO=createUserDTO();
 		UserDTO savedUserDTO=userController.createUser(userDTO);
 		userController.deleteUser(savedUserDTO.getId());
-		User deletedUser=userService.retrieveUserByFirstName("Ashwini");
-		assertThat(deletedUser).isNull();
 	}
-
 	@Test
 	public void testRetrieveAllUser() throws Exception{
 		UserDTO userDTO= createUserDTO();

@@ -7,7 +7,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,22 +34,22 @@ public class UserController {
    @PostMapping("/newUser")
    @ApiOperation(value = "Creates a User object")
     public UserDTO createUser(@Valid  @RequestBody UserDTO userDTO) {
-        User user = userService.createUser(convertDTOToEntity(userDTO));
-        return convertEntityToDTO(user);
+
+        return userService.createUser(userDTO);
     }
 
 
     @GetMapping("/allUsers")
     @ApiOperation(value = "Returns a list of all Users ")
     public List<UserDTO> retrieveAllUser(){
-        List<User> users = userService.retrieveAllUser();
-        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+        return userService.retrieveAllUser();
+
     }
 
     @GetMapping("/users/{id}")
     @ApiOperation(value = "Retrieves the  User by its ID")
     public UserDTO retrieveUserById(@PathVariable(value = "id") Long userId) {
-      return convertEntityToDTO(userService.retrieveUserById(userId));
+      return userService.retrieveUserById(userId);
     }
 
     @PutMapping("/users/{id}")
@@ -58,14 +57,14 @@ public class UserController {
     public UserDTO updateUser(@PathVariable(value = "id") Long userId,
                               @Valid @RequestBody UserDTO userDTO) {
 
-        return convertEntityToDTO(userService.updateUser(convertDTOToEntity(userDTO),userId));
+        return userService.updateUser(userDTO,userId);
     }
 
     @GetMapping("/user/{sequence}")
     @ApiOperation(value = "Retrieves the List of Users with Similar FirstName")
     public List<UserDTO> retrieveUserByFirstNameContaining(@PathVariable("sequence") String sequence){
-        List<User> users = userService.retrieveByFirstNameContaining(sequence);
-        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+        return userService.retrieveByFirstNameContaining(sequence);
+        //return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
     }
 
     @DeleteMapping("/users/{id}")
@@ -74,19 +73,6 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    /*
-       helper methods to convert dto to entity n vice-versa
-     */
 
-    private   UserDTO convertEntityToDTO(User user){
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user,userDTO);
-        return userDTO;
-    }
 
-    private    User convertDTOToEntity(UserDTO userDTO){
-        User user= new User();
-        BeanUtils.copyProperties(userDTO,user);
-        return  user;
-    }
 }

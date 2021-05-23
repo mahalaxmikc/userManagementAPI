@@ -7,10 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 /**
@@ -35,6 +32,7 @@ public class UserDTO {
     private String address;
 
     @Min(18)
+    @NotNull
     private int age;
 
     public UserDTO() {

@@ -5,15 +5,12 @@ import com.camelot.userManagement.exception.NoDataFoundException;
 import com.camelot.userManagement.exception.UserNotFoundException;
 import com.camelot.userManagement.model.User;
 import com.camelot.userManagement.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.camelot.userManagement.util.UserDTOConverter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +20,7 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
+
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -31,113 +29,101 @@ public class UserServiceImpl implements UserService{
       saveOrUpdate
      */
     @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDTO createUser(UserDTO userDTO) {
+
+        return convertEntityToDTO(userRepository.save(convertDTOToEntity(userDTO)));
     }
 
-    public  User updateUser(User user,long userID){
+    public  UserDTO updateUser(UserDTO userDTO,long userID){
         User retrievedUser = userRepository.findById(userID)
                 .orElseThrow(() -> new UserNotFoundException(userID));
 
-        retrievedUser.setFirstName(user.getFirstName());
-        retrievedUser.setLastName(user.getLastName());
-        retrievedUser.setAddress(user.getAddress());
-        retrievedUser.setEmail(user.getEmail());
-        retrievedUser.setAge(user.getAge());
+        retrievedUser.setFirstName(userDTO.getFirstName());
+        retrievedUser.setLastName(userDTO.getLastName());
+        retrievedUser.setAddress(userDTO.getAddress());
+        retrievedUser.setEmail(userDTO.getEmail());
+        retrievedUser.setAge(userDTO.getAge());
 
-        User updatedUser = userRepository.save(user);
-        return updatedUser;
+        User saved =userRepository.save(retrievedUser);
+        UserDTO updatedUserDTO = convertEntityToDTO(saved);
+        return updatedUserDTO;
 
     }
 
     @Override
-    public List<User> retrieveAllUser() {
+    public List<UserDTO> retrieveAllUser() {
         var users = (List<User>) userRepository.findAll();
         if (users.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return users;
+        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public User retrieveUserById(long userID) {
-        return userRepository.findById(userID)
+    public UserDTO retrieveUserById(long userID) {
+        User user= userRepository.findById(userID)
                 .orElseThrow(() ->  new UserNotFoundException(userID));
+        return convertEntityToDTO(user);
 
     }
 
     @Override
-    public User retrieveUserByFirstName(String firstName) {
+    public UserDTO retrieveUserByFirstName(String firstName) {
 
-        return userRepository.findByFirstName(firstName);
+        return convertEntityToDTO(userRepository.findByFirstName(firstName));
     }
 
     @Override
     public void deleteUser(long userID) {
-
 
         User user = userRepository.findById(userID)
                 .orElseThrow(() -> new UserNotFoundException(userID));
 
         userRepository.delete(user);
 
-
-
     }
 
     @Override
-    public List<User> retrieveByFirstNameContaining(String sequence) {
+    public List<UserDTO> retrieveByFirstNameContaining(String sequence) {
         var users = (List<User>) userRepository.findByFirstNameContaining(sequence);
         if (users.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return users;
+        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
 
     }
 
     @Override
-    public List<User> retrieveByFirstNameStartsWith(String sequence) {
+    public List<UserDTO> retrieveByFirstNameStartsWith(String sequence) {
         var users = (List<User>) userRepository.findByFirstNameStartingWith(sequence);
         if (users.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return users;
+        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
 
     }
 
     @Override
-    public List<User> retrieveByFirstNameEndsWith(String sequence) {
+    public List<UserDTO> retrieveByFirstNameEndsWith(String sequence) {
         var users = (List<User>)  userRepository.findByFirstNameEndingWith(sequence);
         if (users.isEmpty()) {
             throw new NoDataFoundException();
         }
-        return users;
+        return users.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
 
     }
 
-
-
-
-
-
-
-
-
-    /*@Override
-    public List<String> retrieveUserFirstNamesStartWith(String sequence) {
-        return retrieveAllUser().stream().map(user -> user.getFirstName()).collect(Collectors.toList())
-                .stream().sorted().filter((user) -> user.startsWith(sequence)).collect(Collectors.toList())
+    private   UserDTO convertEntityToDTO(User user){
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        return userDTO;
     }
 
-    public List<String> retrieveUserFirstNamesEndsWith(String sequence) {
-        return retrieveAllUser().stream().map(user -> user.getFirstName()).collect(Collectors.toList())
-                .stream().sorted().filter((user) -> user.endsWith(sequence)).collect(Collectors.toList());
+    private User convertDTOToEntity(UserDTO userDTO){
+        User user= new User();
+        BeanUtils.copyProperties(userDTO,user);
+        return  user;
     }
-    public List<String> retrieveUserFirstNamesContains(String sequence) {
-        return retrieveAllUser().stream().map(user -> user.getFirstName()).collect(Collectors.toList())
-                .stream().sorted().filter((user) -> user.contains(sequence)).collect(Collectors.toList());
-    }*/
-
 
 
 
