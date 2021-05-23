@@ -115,11 +115,11 @@ public class UserServiceTest {
     @Test
     public void givenSeqThenShouldReturnUserListFirstNameEnd() {
         userRepository.save(user);
-        when(userRepository.findByFirstNameEndingWith("ash")).thenReturn(userList);
-        List<UserDTO> userDTOList1 =userService.retrieveByFirstNameEndsWith("ash");
+        when(userRepository.findByFirstNameEndingWith("ni")).thenReturn(userList);
+        List<UserDTO> userDTOList1 =userService.retrieveByFirstNameEndsWith("ni");
         assertEquals(userDTOList1.size(),userList.size());
         verify(userRepository,times(1)).save(user);
-        verify(userRepository,times(1)).findByFirstNameEndingWith("ash");
+        verify(userRepository,times(1)).findByFirstNameEndingWith("ni");
     }
 
 }
